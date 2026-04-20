@@ -2,7 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AlpineOS Admin">
+<meta name="theme-color" content="#07111f">
 <title>AlpineOS — Administration</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -177,6 +181,127 @@ input[type=color]{width:36px;height:28px;border:none;border-radius:6px;cursor:po
 .actu-pub.draft{background:rgba(255,179,71,.1);color:var(--warn);}
 .actu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
 @media(max-width:900px){.actu-grid{grid-template-columns:1fr 1fr;}}
+
+/* ═══════════════════════════════════════
+   MOBILE / iPHONE 16 — ADMIN
+═══════════════════════════════════════ */
+
+/* Safe area padding pour header */
+header{
+  padding-top:env(safe-area-inset-top);
+  height:calc(60px + env(safe-area-inset-top));
+}
+
+/* Bottom nav mobile */
+.mob-nav{
+  display:none;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:rgba(6,13,26,.97);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid rgba(94,184,255,.15);
+  z-index:300;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.mob-nav-inner{display:flex;align-items:stretch;height:58px;}
+.mbn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;cursor:pointer;background:none;border:none;padding:0;
+  -webkit-tap-highlight-color:transparent;position:relative;
+  transition:all .15s;
+}
+.mbn.active .mbn-ico{color:var(--frost);}
+.mbn.active .mbn-lbl{color:var(--frost);font-weight:600;}
+.mbn.active::before{
+  content:'';position:absolute;top:0;left:15%;right:15%;
+  height:2px;background:var(--azure);border-radius:0 0 3px 3px;
+}
+.mbn-ico{font-size:19px;color:rgba(168,216,240,.45);transition:color .15s;}
+.mbn-lbl{font-size:9px;color:rgba(168,216,240,.45);letter-spacing:.3px;transition:color .15s;}
+.mbn-admin{background:linear-gradient(135deg,rgba(255,215,0,.18),rgba(255,215,0,.08));border-radius:12px;margin:6px 3px;border:1px solid rgba(255,215,0,.25);}
+.mbn-admin .mbn-ico{color:var(--gold);}
+.mbn-admin .mbn-lbl{color:rgba(255,215,0,.7);}
+.mbn-admin.active::before{display:none;}
+.mbn-alert-dot{position:absolute;top:6px;right:calc(50% - 14px);width:7px;height:7px;background:var(--alert);border-radius:50%;border:1.5px solid var(--deep);animation:pulse 1.5s infinite;}
+
+@media(max-width:430px){
+  /* Show bottom nav */
+  .mob-nav{display:block;}
+
+  /* Hide desktop sidebar + header buttons */
+  nav#mainNav{display:none !important;}
+  .resort-badge,.wx-badge{display:none;}
+  #syncStatus{font-size:10px;}
+
+  /* Body padding */
+  body{padding-bottom:calc(58px + env(safe-area-inset-bottom));}
+
+  /* App grid → single column */
+  .app{grid-template-columns:1fr;grid-template-rows:calc(60px + env(safe-area-inset-top)) 1fr;}
+
+  /* Header compact */
+  header{padding:0 14px;padding-top:env(safe-area-inset-top);}
+  .logo-txt{font-size:18px;}
+  .logo-sub{display:none;}
+  .hdr-right{gap:8px;}
+  .admin-btn{padding:4px 10px;font-size:11px;}
+
+  /* Main padding */
+  main{padding:14px;}
+
+  /* KPI grid 2 col */
+  .kgrid{grid-template-columns:1fr 1fr;gap:8px;}
+  .kval{font-size:26px;}
+
+  /* Grids → 1 col */
+  .g2,.g21,.g3{grid-template-columns:1fr;}
+  .kgrid.kgrid-4{grid-template-columns:1fr 1fr;}
+
+  /* Tables → scrollable */
+  .pb{overflow-x:auto;}
+  .tbl{min-width:500px;}
+
+  /* Panels */
+  .panel{border-radius:10px;}
+  .ph{padding:10px 14px;}
+  .pb{padding:10px 14px;}
+
+  /* Admin sections */
+  .admin-section{padding:14px;}
+  .frow-2,.frow-3{grid-template-columns:1fr;}
+
+  /* Cannon grid */
+  #cannonsGrid{grid-template-columns:repeat(3,1fr) !important;}
+
+  /* Actu grid */
+  .actu-grid{grid-template-columns:1fr;}
+
+  /* Section title */
+  .ptitle h1{font-size:24px;}
+
+  /* Modal full screen on mobile */
+  .modal{width:100vw;max-width:100vw;border-radius:16px 16px 0 0;position:fixed;bottom:0;left:0;right:0;margin:0;max-height:92vh;}
+  .modal-overlay{align-items:flex-end;}
+  .modal-overlay.show .modal{transform:scale(1) translateY(0);}
+
+  /* Toast top */
+  .toast-container{top:calc(env(safe-area-inset-top) + 70px);right:12px;left:12px;}
+  .toast{min-width:unset;}
+}
+
+@media(min-width:431px) and (max-width:768px){
+  .mob-nav{display:block;}
+  nav#mainNav{display:none !important;}
+  body{padding-bottom:calc(58px + env(safe-area-inset-bottom));}
+  .app{grid-template-columns:1fr;}
+  .resort-badge,.wx-badge{display:none;}
+  .g2{grid-template-columns:1fr;}
+  .kgrid{grid-template-columns:1fr 1fr;}
+  .frow-2{grid-template-columns:1fr 1fr;}
+  .frow-3{grid-template-columns:1fr 1fr;}
+  .actu-grid{grid-template-columns:1fr 1fr;}
+}
 </style>
 </head>
 <body>
@@ -507,7 +632,78 @@ input[type=color]{width:36px;height:28px;border:none;border-radius:6px;cursor:po
 </main>
 </div>
 
+<!-- BOTTOM NAV MOBILE -->
+<nav class="mob-nav" id="mobNav">
+  <div class="mob-nav-inner">
+    <button class="mbn active" id="mbn-dashboard" onclick="showPage('dashboard')">
+      <span class="mbn-ico">🏔️</span><span class="mbn-lbl">Dashboard</span>
+    </button>
+    <button class="mbn" id="mbn-pistes" onclick="showPage('pistes')">
+      <span class="mbn-ico">⛷️</span><span class="mbn-lbl">Pistes</span>
+    </button>
+    <button class="mbn" id="mbn-remontees" onclick="showPage('remontees')">
+      <span class="mbn-ico">🚡</span><span class="mbn-lbl">Remontées</span>
+    </button>
+    <button class="mbn" id="mbn-alertes" onclick="showPage('alertes')">
+      <span class="mbn-ico">🚨</span><span class="mbn-lbl">Alertes</span>
+      <span class="mbn-alert-dot" id="mobAlertDot"></span>
+    </button>
+    <button class="mbn" id="mbn-more" onclick="toggleMobMenu()">
+      <span class="mbn-ico">☰</span><span class="mbn-lbl">Menu</span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE FULL MENU OVERLAY -->
+<div id="mobMenuOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);z-index:400;" onclick="toggleMobMenu()"></div>
+<div id="mobMenu" style="display:none;position:fixed;bottom:calc(58px + env(safe-area-inset-bottom));left:0;right:0;background:rgba(8,16,32,.98);border-top:1px solid rgba(94,184,255,.15);border-radius:20px 20px 0 0;z-index:401;padding:16px;">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;">
+    <button onclick="showPage('enneigement');toggleMobMenu();" style="background:rgba(94,184,255,.08);border:1px solid rgba(94,184,255,.15);border-radius:12px;padding:12px 6px;color:var(--snow);cursor:pointer;text-align:center;">
+      <div style="font-size:22px">💨</div><div style="font-size:10px;margin-top:4px;color:var(--glacier)">Enneigement</div>
+    </button>
+    <button onclick="showPage('personnel');toggleMobMenu();" style="background:rgba(94,184,255,.08);border:1px solid rgba(94,184,255,.15);border-radius:12px;padding:12px 6px;color:var(--snow);cursor:pointer;text-align:center;">
+      <div style="font-size:22px">👥</div><div style="font-size:10px;margin-top:4px;color:var(--glacier)">Personnel</div>
+    </button>
+    <button onclick="showPage('finances');toggleMobMenu();" style="background:rgba(94,184,255,.08);border:1px solid rgba(94,184,255,.15);border-radius:12px;padding:12px 6px;color:var(--snow);cursor:pointer;text-align:center;">
+      <div style="font-size:22px">💰</div><div style="font-size:10px;margin-top:4px;color:var(--glacier)">Finances</div>
+    </button>
+    <button onclick="showPage('meteo');toggleMobMenu();" style="background:rgba(94,184,255,.08);border:1px solid rgba(94,184,255,.15);border-radius:12px;padding:12px 6px;color:var(--snow);cursor:pointer;text-align:center;">
+      <div style="font-size:22px">🌨️</div><div style="font-size:10px;margin-top:4px;color:var(--glacier)">Météo</div>
+    </button>
+    <button onclick="showPage('actualites');toggleMobMenu();" style="background:rgba(94,184,255,.08);border:1px solid rgba(94,184,255,.15);border-radius:12px;padding:12px 6px;color:var(--snow);cursor:pointer;text-align:center;">
+      <div style="font-size:22px">📰</div><div style="font-size:10px;margin-top:4px;color:var(--glacier)">Actualités</div>
+    </button>
+    <button onclick="adminLoggedIn?showPage('admin'):toggleAdmin();toggleMobMenu();" style="background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);border-radius:12px;padding:12px 6px;color:var(--gold);cursor:pointer;text-align:center;">
+      <div style="font-size:22px">🛠️</div><div style="font-size:10px;margin-top:4px;">Admin</div>
+    </button>
+    <button onclick="openBinConfig();toggleMobMenu();" style="background:rgba(94,184,255,.08);border:1px solid rgba(94,184,255,.15);border-radius:12px;padding:12px 6px;color:var(--snow);cursor:pointer;text-align:center;">
+      <div style="font-size:22px">☁️</div><div style="font-size:10px;margin-top:4px;color:var(--glacier)">JSONBin</div>
+    </button>
+    <button onclick="toggleAdmin();toggleMobMenu();" style="background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.18);border-radius:12px;padding:12px 6px;color:var(--gold);cursor:pointer;text-align:center;">
+      <div style="font-size:22px" id="mobAdminIco">🔐</div><div style="font-size:10px;margin-top:4px;" id="mobAdminLbl">Connexion</div>
+    </button>
+  </div>
+  <div style="text-align:center;font-size:11px;color:rgba(168,216,240,.35);padding-top:8px;border-top:1px solid rgba(94,184,255,.08)" id="mobSyncStatus">☁️ Sync...</div>
+</div>
+
 <script>
+function toggleMobMenu(){
+  const ov=document.getElementById('mobMenuOverlay');
+  const mn=document.getElementById('mobMenu');
+  const open=mn.style.display==='block';
+  ov.style.display=open?'none':'block';
+  mn.style.display=open?'none':'block';
+  if(!open){
+    // update admin label
+    document.getElementById('mobAdminIco').textContent=adminLoggedIn?'🛡️':'🔐';
+    document.getElementById('mobAdminLbl').textContent=adminLoggedIn?'Déco Admin':'Connexion';
+    // sync status
+    const ss=document.getElementById('syncStatus');
+    if(ss) document.getElementById('mobSyncStatus').innerHTML=ss.innerHTML;
+  }
+}
+
+
 // ═══════════════════════════════════════════════════════
 const SKEY='alpineOS_state';
 let S,adminLoggedIn=false,nid=100;
@@ -719,8 +915,15 @@ for(let i=0;i<35;i++){const s=document.createElement('span');const sz=Math.rando
 function showPage(id){
   document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
   document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.mbn').forEach(e=>e.classList.remove('active'));
   const pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(e=>{if(e.getAttribute('onclick')&&e.getAttribute('onclick').includes("'"+id+"'"))e.classList.add('active');});
+  // sync mobile bottom nav
+  const mbn=document.getElementById('mbn-'+id);
+  if(mbn)mbn.classList.add('active');
+  // update mobile alert dot
+  const dot=document.getElementById('mobAlertDot');
+  if(dot){const n=S&&S.alerts?S.alerts.filter(a=>a.active).length:0;dot.style.display=n>0?'block':'none';}
   renderPage(id);
 }
 function renderPage(id){({dashboard:renderDashboard,pistes:renderPistes,remontees:renderRemontees,enneigement:renderEnneigement,personnel:renderPersonnel,finances:renderFinances,meteo:renderMeteo,actualites:renderActualites,alertes:renderAlertes,admin:renderAdmin})[id]?.();}
@@ -736,7 +939,7 @@ function updateHeader(){
   document.getElementById('metSub').textContent='Station '+S.station.nom+' · Alt. '+S.station.alt+'m';
   document.getElementById('alSub').textContent=S.alerts.filter(a=>a.active).length+' alerte(s) active(s)';
 }
-function updateAlertBadge(){const n=S.alerts.filter(a=>a.active).length;document.getElementById('alertBadge').textContent=n;document.getElementById('bellDot').style.display=n>0?'block':'none';if(document.getElementById('qAlertes'))document.getElementById('qAlertes').textContent=n;}
+function updateAlertBadge(){const n=S.alerts.filter(a=>a.active).length;document.getElementById('alertBadge').textContent=n;document.getElementById('bellDot').style.display=n>0?'block':'none';if(document.getElementById('qAlertes'))document.getElementById('qAlertes').textContent=n;const dot=document.getElementById('mobAlertDot');if(dot)dot.style.display=n>0?'block':'none';}
 
 // HELPERS
 function kpi(l,v,u,i,d,dc){return`<div class="kcard"><div class="klabel">${l}</div><div class="kval">${v}<span class="kunit">${u||''}</span></div><div class="kdelta ${dc||'nu'}">${d||''}</div><div class="kico">${i}</div></div>`;}
