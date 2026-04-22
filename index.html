@@ -816,8 +816,24 @@ function migrateState(obj){
 function setSyncStatus(s){
   const el=document.getElementById('syncStatus');
   if(!el)return;
-  const map={saving:'<span style="color:var(--warn)">⏳ Sauvegarde...</span>',ok:'<span style="color:var(--go)">☁️ Synchronisé</span>',error:'<span style="color:var(--alert)">⚠️ Erreur sync</span>',offline:'<span style="color:var(--glacier)">💾 Local</span>'};
+  const isLocal=window.location.protocol==='file:';
+  const map={
+    saving:'<span style="color:var(--warn)">⏳ Sauvegarde...</span>',
+    ok:'<span style="color:var(--go)">☁️ Synchronisé</span>',
+    error:'<span style="color:var(--alert)">⚠️ Erreur sync</span>',
+    offline:isLocal
+      ?'<span style="color:var(--warn)" title="Ouvre ce fichier depuis GitHub Pages pour synchro cloud">💾 Local (pas de sync)</span>'
+      :'<span style="color:var(--glacier)">💾 Local</span>'
+  };
   el.innerHTML=map[s]||'';
+  // Banner local si fichier ouvert directement
+  if(isLocal && s==='offline' && !document.getElementById('localBanner')){
+    const b=document.createElement('div');
+    b.id='localBanner';
+    b.style.cssText='position:fixed;top:calc(60px + env(safe-area-inset-top));left:0;right:0;background:rgba(255,179,71,.12);border-bottom:1px solid rgba(255,179,71,.3);padding:8px 20px;font-size:12px;color:var(--warn);z-index:99;text-align:center;';
+    b.innerHTML='⚠️ Fichier ouvert en local — JSONBin ne peut pas sync depuis <code>file://</code>. Publie sur <strong>GitHub Pages</strong> pour la synchronisation cloud. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:var(--warn);cursor:pointer;margin-left:8px;font-size:14px;">✕</button>';
+    document.body.appendChild(b);
+  }
 }
 
 async function loadState(){
@@ -831,19 +847,25 @@ async function loadState(){
   try{
     setSyncStatus('saving');
     const res=await fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{
+      method:'GET',
       headers:{'X-Master-Key':apiKey,'X-Bin-Meta':'false'}
     });
-    if(!res.ok)throw new Error('HTTP '+res.status);
+    if(!res.ok){
+      const txt=await res.text().catch(()=>'');
+      throw new Error('HTTP '+res.status+' — '+txt.slice(0,80));
+    }
     const data=await res.json();
     S=migrateState(data);
     localStorage.setItem(SKEY,JSON.stringify(S));
     setSyncStatus('ok');
   }catch(e){
+    console.error('JSONBin loadState error:',e);
     const d=localStorage.getItem(SKEY);
     try{S=d?JSON.parse(d):JSON.parse(JSON.stringify(DEFAULT));}
     catch{S=JSON.parse(JSON.stringify(DEFAULT));}
-    migrateState(S);setSyncStatus('error');
-    toast('⚠️ JSONBin inaccessible — données locales utilisées','warn');
+    migrateState(S);
+    setSyncStatus('error');
+    toast('⚠️ JSONBin: '+e.message,'warn');
   }
 }
 
@@ -857,12 +879,20 @@ async function saveState(){
     try{
       const res=await fetch('https://api.jsonbin.io/v3/b/'+binId,{
         method:'PUT',
+        mode:'cors',
         headers:{'Content-Type':'application/json','X-Master-Key':apiKey},
         body:JSON.stringify(S)
       });
-      if(!res.ok)throw new Error('HTTP '+res.status);
+      if(!res.ok){
+        const txt=await res.text().catch(()=>'');
+        throw new Error('HTTP '+res.status+' '+txt.slice(0,60));
+      }
       setSyncStatus('ok');
-    }catch(e){setSyncStatus('error');toast('⚠️ Erreur sauvegarde cloud','warn');}
+    }catch(e){
+      console.error('JSONBin saveState error:',e);
+      setSyncStatus('error');
+      toast('⚠️ Sauvegarde: '+e.message,'warn');
+    }
   },800);
 }
 
